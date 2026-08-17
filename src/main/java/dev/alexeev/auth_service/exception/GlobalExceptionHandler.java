@@ -53,6 +53,18 @@ public class GlobalExceptionHandler {
     return build(HttpStatus.BAD_REQUEST, "Malformed request body or invalid field value (e.g. role must be 'admin' or 'user')");
   }
 
+  @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+  public ResponseEntity<Map<String, Object>> handleAccessDenied(
+          org.springframework.security.access.AccessDeniedException ex) {
+    return build(HttpStatus.FORBIDDEN, "Access denied: admin role required");
+  }
+
+  @ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
+  public ResponseEntity<Map<String, Object>> handleAuthenticationFailure(
+          org.springframework.security.core.AuthenticationException ex) {
+    return build(HttpStatus.UNAUTHORIZED, "Authentication required");
+  }
+
   @ExceptionHandler(Exception.class)
   public ResponseEntity<Map<String, Object>> handleGeneric(Exception ex) {
     log.error("Unexpected error", ex);
