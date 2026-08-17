@@ -30,7 +30,7 @@ public class AuthService {
     credential.setUserId(request.getUserId());
     credential.setLogin(request.getLogin());
     credential.setPasswordHash(passwordEncoder.encode(request.getPassword()));
-    credential.setRole(Credential.Role.valueOf(request.getRole().toUpperCase()));
+    credential.setRole(request.getRole());
 
     credentialRepository.save(credential);
   }

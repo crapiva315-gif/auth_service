@@ -1,5 +1,6 @@
 package dev.alexeev.auth_service.entity;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,6 +39,13 @@ public class Credential {
   }
 
   public enum Role {
-    ADMIN, USER
+    ADMIN, USER;
+    @JsonCreator
+    public static Role fromString(String value) {
+      if (value == null) {
+        return null;
+      }
+      return Role.valueOf(value.trim().toUpperCase());
+    }
   }
 }
