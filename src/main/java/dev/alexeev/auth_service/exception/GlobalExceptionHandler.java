@@ -47,6 +47,12 @@ public class GlobalExceptionHandler {
     return ResponseEntity.badRequest().body(body);
   }
 
+  @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
+  public ResponseEntity<Map<String, Object>> handleMalformedRequest(
+          org.springframework.http.converter.HttpMessageNotReadableException ex) {
+    return build(HttpStatus.BAD_REQUEST, "Malformed request body or invalid field value (e.g. role must be 'admin' or 'user')");
+  }
+
   @ExceptionHandler(Exception.class)
   public ResponseEntity<Map<String, Object>> handleGeneric(Exception ex) {
     log.error("Unexpected error", ex);
