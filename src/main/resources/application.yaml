@@ -1,3 +1,7 @@
 spring:
   application:
     name: auth_service
+jwt:
+  secret: ${JWT_SECRET:696467b25f11a2eb23a303183b836218}
+  access-token-expiration-ms: ${JWT_ACCESS_EXPIRATION:900000}
+  refresh-token-expiration-ms: ${JWT_REFRESH_EXPIRATION:604800000}
