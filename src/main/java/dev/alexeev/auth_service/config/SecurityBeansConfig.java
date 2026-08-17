@@ -1,6 +1,7 @@
 package dev.alexeev.auth_service.config;
 
 import dev.alexeev.auth_service.security.JwtAuthenticationFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,8 +30,12 @@ public class SecurityBeansConfig {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
-            .csrf(AbstractHttpConfigurer::disable)
+            .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .exceptionHandling(ex -> ex
+                    .authenticationEntryPoint((request, response, authException) ->
+                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication required"))
+            )
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/api/v1/auth/login", "/api/v1/auth/validate",
                             "/api/v1/auth/refresh").permitAll()
