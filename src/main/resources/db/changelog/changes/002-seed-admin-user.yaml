@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-seed-admin-user
+      author: alexey
+      changes:
+        - insert:
+            tableName: credentials
+            columns:
+              - column:
+                  name: user_id
+                  value: 1
+              - column:
+                  name: login
+                  value: admin
+              # bcrypt hash for password "ChangeMe123!" - MUST be changed after first login
+              - column:
+                  name: password_hash
+                  value: "$2b$12$sNF/uYheCriW2vkRJ8vNxux3.k9Y5I8pYsjbjXJlcjAdWhejKIpOe"
+              - column:
+                  name: role
+                  value: ADMIN
+              - column:
+                  name: created_at
+                  valueDate: now()
+      rollback:
+        - delete:
+            tableName: credentials
+            where: login='admin'
