@@ -16,7 +16,6 @@ public class AuthController {
 
   private final AuthService authService;
 
-  @PreAuthorize("hasRole('ADMIN')")
   @PostMapping("/register")
   public ResponseEntity<Void> register(@Valid @RequestBody RegisterRequest request) {
     authService.register(request);

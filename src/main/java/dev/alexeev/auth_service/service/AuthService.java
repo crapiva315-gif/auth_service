@@ -12,6 +12,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -30,9 +32,24 @@ public class AuthService {
     credential.setUserId(request.getUserId());
     credential.setLogin(request.getLogin());
     credential.setPasswordHash(passwordEncoder.encode(request.getPassword()));
-    credential.setRole(request.getRole());
+    credential.setRole(resolveAllowedRole(request.getRole()));
 
     credentialRepository.save(credential);
+  }
+
+  private Credential.Role resolveAllowedRole(Credential.Role requestedRole) {
+    var authentication = org.springframework.security.core.context.SecurityContextHolder
+            .getContext().getAuthentication();
+
+    boolean callerIsAdmin = authentication != null
+            && authentication.isAuthenticated()
+            && authentication.getAuthorities().stream()
+            .anyMatch(a -> Objects.equals(a.getAuthority(), "ROLE_ADMIN"));
+
+    if (callerIsAdmin) {
+      return requestedRole;
+    }
+    return Credential.Role.USER;
   }
 
   @Transactional(readOnly = true)
