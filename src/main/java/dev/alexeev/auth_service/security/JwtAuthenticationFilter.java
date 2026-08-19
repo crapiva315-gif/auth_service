@@ -38,8 +38,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         Long userId = jwtService.extractUserId(token);
         String role = jwtService.extractRole(token);
 
-        // роль хранится в токене как ADMIN/USER - префикс ROLE_ обязателен
-        // для совместимости с hasRole()/@PreAuthorize("hasRole(...)")
         var authority = new SimpleGrantedAuthority("ROLE_" + role);
 
         var authentication = new UsernamePasswordAuthenticationToken(
