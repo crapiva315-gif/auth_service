@@ -34,6 +34,9 @@ services:
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
+    read_only: true
+    tmpfs:
+      - /tmp
 
 volumes:
   auth_db_data:
