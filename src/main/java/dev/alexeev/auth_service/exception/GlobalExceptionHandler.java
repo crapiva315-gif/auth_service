@@ -33,6 +33,12 @@ public class GlobalExceptionHandler {
     return build(HttpStatus.UNAUTHORIZED, ex.getMessage());
   }
 
+  @ExceptionHandler(io.jsonwebtoken.JwtException.class)
+  public ResponseEntity<Map<String, Object>> handleJwtException(io.jsonwebtoken.JwtException ex) {
+    log.warn("JWT processing failed: {}", ex.getMessage());
+    return build(HttpStatus.UNAUTHORIZED, "Invalid or malformed token");
+  }
+
   @ExceptionHandler(NoResourceFoundException.class)
   public ResponseEntity<Map<String, Object>> handleNoResourceFound(NoResourceFoundException ex) {
     return build(HttpStatus.NOT_FOUND, "Resource not found");
