@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003-create-user-id-sequence
+      author: alexey
+      changes:
+        - createSequence:
+            sequenceName: user_id_seq
+            startValue: 2
+            incrementBy: 1
+      rollback:
+        - dropSequence:
+            sequenceName: user_id_seq

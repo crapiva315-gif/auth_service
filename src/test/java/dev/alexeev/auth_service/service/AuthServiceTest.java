@@ -1,10 +1,6 @@
 package dev.alexeev.auth_service.service;
 
-import dev.alexeev.auth_service.dto.LoginRequest;
-import dev.alexeev.auth_service.dto.RefreshRequest;
-import dev.alexeev.auth_service.dto.RegisterRequest;
-import dev.alexeev.auth_service.dto.TokenResponse;
-import dev.alexeev.auth_service.dto.ValidateResponse;
+import dev.alexeev.auth_service.dto.*;
 import dev.alexeev.auth_service.entity.Credential;
 import dev.alexeev.auth_service.exception.InvalidCredentialsException;
 import dev.alexeev.auth_service.exception.InvalidTokenException;
@@ -58,19 +54,21 @@ class AuthServiceTest {
   @Test
   void register_shouldForceUserRole_whenCallerIsAnonymous() {
     RegisterRequest request = new RegisterRequest();
-    request.setUserId(1L);
     request.setLogin("newuser");
     request.setPassword("password123");
-    request.setRole(Credential.Role.ADMIN); // попытка стать admin
+    request.setRole(Credential.Role.ADMIN);
 
     when(credentialRepository.existsByLogin("newuser")).thenReturn(false);
+    when(credentialRepository.nextUserId()).thenReturn(100L);
     when(passwordEncoder.encode("password123")).thenReturn("hashed");
 
-    authService.register(request);
+    RegisterResponse result = authService.register(request);
 
+    assertThat(result.getUserId()).isEqualTo(100L);
     ArgumentCaptor<Credential> captor = ArgumentCaptor.forClass(Credential.class);
     verify(credentialRepository).save(captor.capture());
     assertThat(captor.getValue().getRole()).isEqualTo(Credential.Role.USER);
+    assertThat(captor.getValue().getUserId()).isEqualTo(100L);
   }
 
   @Test
@@ -78,7 +76,6 @@ class AuthServiceTest {
     setAuthenticatedAdmin();
 
     RegisterRequest request = new RegisterRequest();
-    request.setUserId(2L);
     request.setLogin("newadmin");
     request.setPassword("password123");
     request.setRole(Credential.Role.ADMIN);
@@ -96,7 +93,6 @@ class AuthServiceTest {
   @Test
   void register_shouldThrowException_whenLoginAlreadyExists() {
     RegisterRequest request = new RegisterRequest();
-    request.setUserId(1L);
     request.setLogin("existing");
     request.setPassword("password123");
     request.setRole(Credential.Role.USER);

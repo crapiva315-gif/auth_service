@@ -23,18 +23,22 @@ public class AuthService {
   private final BCryptPasswordEncoder passwordEncoder;
 
   @Transactional
-  public void register(RegisterRequest request) {
+  public RegisterResponse register(RegisterRequest request) {
     if (credentialRepository.existsByLogin(request.getLogin())) {
       throw new UserAlreadyExistsException(request.getLogin());
     }
 
+    Long userId = credentialRepository.nextUserId();
+
     Credential credential = new Credential();
-    credential.setUserId(request.getUserId());
+    credential.setUserId(userId);
     credential.setLogin(request.getLogin());
     credential.setPasswordHash(passwordEncoder.encode(request.getPassword()));
     credential.setRole(resolveAllowedRole(request.getRole()));
 
     credentialRepository.save(credential);
+
+    return new RegisterResponse(userId);
   }
 
   private Credential.Role resolveAllowedRole(Credential.Role requestedRole) {
