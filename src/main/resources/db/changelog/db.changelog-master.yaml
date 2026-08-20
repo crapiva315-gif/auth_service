@@ -3,3 +3,5 @@ databaseChangeLog:
       file: db/changelog/changes/001-create-credentials-table.yaml
   - include:
       file: db/changelog/changes/002-seed-admin-user.yaml
+  - include:
+      file: db/changelog/changes/003-create-user-id-sequence.yaml

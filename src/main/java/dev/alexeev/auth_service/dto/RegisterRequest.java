@@ -9,8 +9,6 @@ import lombok.Setter;
 
 @Getter @Setter
 public class RegisterRequest {
-  @NotNull(message = "User ID is required")
-  private Long userId;
 
   @NotBlank(message = "Login is required")
   private String login;
